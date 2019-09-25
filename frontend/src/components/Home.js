@@ -15,6 +15,7 @@ export default class Home extends Component {
     
     return (
       <div>
+        <h1>Hello</h1>
        <Survey />
       </div>
     )
