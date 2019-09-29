@@ -4,7 +4,7 @@ const moment = require("moment");
 const now = moment()
 
 const UserSchema = new Schema({
-  email: { type: String, lowercase: true },
+  email: { type: String, unique: true, lowercase: true, default: '' },
   password: { type: String, default: "" },
   firstName: { type: String, default: "" },
   lastName: { type: String, default: "" },

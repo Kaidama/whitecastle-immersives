@@ -24,7 +24,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.use(passport.initialize())
-
+require('./auth/passport')(passport)
 
 app.use(cors())
 app.use(logger("dev"));
