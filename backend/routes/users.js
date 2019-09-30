@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const userController = require("../controllers/userController");
-const auth = require("../middleware/inputValidations");
+const auth = require("../utils/inputValidations");
 /* GET users listing. */
 router.get("/", function(req, res, next) {
   res.send("respond with resources");

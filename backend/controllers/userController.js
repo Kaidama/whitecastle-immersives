@@ -1,30 +1,32 @@
 const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const { validationResult } = require("express-validator");
+import * as bcrypt from 'bcryptjs'
+import * as jwt from 'jsonwebtoken'
+import { registerValidation } from '../utils/validation'
 
 module.exports = {
   register: async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-
-      return res.status(400).json({ errors: errors.array() });
-    }
+    const {error} = registerValidation(req.body);
+    // if (error) return res.status(400).json({ errors: errors.array() });
+    if (error) return res.status(400).send(error.details[0].message);
     //requirements for the register
     const { firstName, lastName, email, password } = req.body;
-    console.log(`line 15: `, req.body);
+    
+    // const emailExist = await User.findOne({ email })
+    // if(emailExist) return res.status(400).send('User email already exists')
     
     try {
-      let user = await User.findOne({ email });
-      // check if user exists
-      console.log(user);
-      if (!user) {
+      let user = await User.findOne({email})
+      if(user) return res.status(400).send('User email already exists')
+
+
         user = new User({
           firstName,
           lastName,
           email,
           password
         });
+
+        
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
         await user.save();
@@ -45,11 +47,7 @@ module.exports = {
             res.json({ token });
           }
         );
-      } else {
-        res
-          .status(400)
-          .json({ errors: [{ msg: "User Exists please try another email" }] });
-      }
+
     } catch (err) {
       console.log(err.message);
       res.status(500).send("Server Error");

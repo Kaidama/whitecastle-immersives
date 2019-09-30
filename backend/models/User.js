@@ -1,20 +1,17 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema
-const moment = require("moment");
-const now = moment()
+import mongoose from 'mongoose'
+import * as moment from 'moment'
 
-const UserSchema = new Schema({
-  email: { type: String, unique: true, lowercase: true, default: '' },
+const now = moment();
+
+const userSchema = new mongoose.Schema({
+  email: { type: String, unique: true, lowercase: true, default: "" },
   password: { type: String, default: "" },
   firstName: { type: String, default: "" },
   lastName: { type: String, default: "" },
   timestamp: {
     type: String,
     default: now.format("dddd, MMMM Do YYYY, kk:mm:ss")
-  },
-  data: [{ type: Schema.Types.ObjectId, ref: 'SurveyData' }]
+  }
 });
 
-
-
-module.exports = mongoose.model("user", UserSchema);
+export const User = mongoose.model("user", userSchema);

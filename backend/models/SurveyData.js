@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 const now = moment()
 
 const SurveySchema = new Schema({
-  _id: { type: Schema.Types.ObjectId, ref: 'User'},
+  user: { type: Schema.Types.ObjectId, ref: 'user'},
   timestamp: {
     type: String,
     default: now.format("dddd, MMMM Do YYYY, kk:mm:ss")
