@@ -1,7 +1,7 @@
 const User = require("../models/User");
-import * as bcrypt from 'bcryptjs'
-import * as jwt from 'jsonwebtoken'
-import { registerValidation } from '../utils/validation'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import { registerValidation } from '../utils/auth'
 
 module.exports = {
   register: async (req, res) => {
@@ -26,7 +26,7 @@ module.exports = {
           password
         });
 
-        
+
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
         await user.save();
