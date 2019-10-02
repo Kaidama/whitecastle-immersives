@@ -159,8 +159,9 @@ export const giveUsersPoo = async (req, res, next) => {
     return res.status(401).end();
   }
   //
-  const user = await User.findById(payload.id).select("-password");
-
+  const user = await User.findById(payload.id)
+    .select("-password")
+    .exec();
   if (!user) {
     return res.status(401).end();
   }

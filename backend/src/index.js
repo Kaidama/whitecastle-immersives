@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 
 //the middleware used to get to poo
+import indexRouter from '../src/routes/index'
 import { giveUsersPoo, signup, signin } from '../src/utils/auth'
 import userRouter from '../src/routes/users'
 
@@ -36,8 +37,10 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
+app.use('/', indexRouter)
 app.post('/signup', signup)
 app.post('/signin', signin)
+
 
 // give all the users poo before attempting signing 
 app.use('/api', giveUsersPoo)// protected by jwt
