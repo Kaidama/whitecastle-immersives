@@ -1,13 +1,13 @@
 import express from 'express'
 import { json, urlencoded } from 'body-parser'
 import morgan from 'morgan'
+import mongoose from 'mongoose'
+import cors from 'cors'
+// import passport from 'passport'
+// const mongoose = require("mongoose")
+// const passport = require('passport')
 
-
-const mongoose = require("mongoose")
-
-const passport = require('passport')
-
-require('dotenv').config()
+import 'dotenv/config'
 
 const app = express();
 
@@ -23,18 +23,18 @@ mongoose
   .catch(error => console.log(`error: `, error));
 
 
-
-app.use(passport.initialize())
-require('./auth/passport')(passport)
+// might not need passport
+// app.use(passport.initialize())
+// require('./auth/passport')(passport)
 
 app.use(cors())
-app.use(morgan("dev"));
 app.use(json());
-app.use(urlencoded({ extended: false }));
+app.use(urlencoded({ extended: true }));
+app.use(morgan("dev"));
 
 
-app.use("/", require("./routes/index"));
-app.use("/users", require("./routes/users"));
+// app.use("/", require("./routes/index"));
+// app.use("/users", require("./routes/users"));
 
 const PORT = process.env.PORT || 3001;
 

@@ -1,14 +1,16 @@
 {
-  "name": "consensus-server",
+  "name": "backend",
   "version": "0.0.0",
   "private": true,
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon server"
+    "start": "nodemon --exec babel-node src/index.js",
+    "server": "node index.js"
   },
   "dependencies": {
     "@hapi/joi": "^16.1.4",
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^8.1.0",
@@ -20,5 +22,14 @@
     "morgan": "~1.9.1",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0"
-  }
+  },
+  "description": "",
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/node": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "nodemon": "^1.19.3"
+  },
+  "author": "",
+  "license": "ISC"
 }
