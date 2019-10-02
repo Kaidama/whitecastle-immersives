@@ -1,8 +1,12 @@
 // const User = require("../models/User");
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import { registerValidation } from '../utils/auth'
+// import bcrypt from 'bcryptjs'
+// import jwt from 'jsonwebtoken'
+// import { registerValidation } from '../utils/auth'
+import { User } from '../models/User'
 
+export const userData = (req, res) => {
+    res.status(200).json({ data: req.user })
+}
 // module.exports = {
 //   register: async (req, res) => {
 //     const {error} = registerValidation(req.body);

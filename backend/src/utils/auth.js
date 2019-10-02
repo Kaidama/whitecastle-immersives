@@ -1,9 +1,10 @@
-import * as Joi from "@hapi/joi";
+import Joi from "@hapi/joi";
 import { User } from "../models/User";
 import jwt from "jsonwebtoken";
 import { check } from "express-validator";
+import bcrypt from "bcryptjs";
 
-export const validate = method => {
+export const expressValidator = method => {
   switch (method) {
     case "signup": {
       return [
@@ -32,8 +33,7 @@ export const validate = method => {
   }
 };
 
-
-export const registerValidation = data => {
+export const hapiRegister = data => {
   const schema = {
     firstName: Joi.string()
       .min(3)
@@ -51,7 +51,7 @@ export const registerValidation = data => {
   return Joi.validate(data, schema);
 };
 
-export const loginValidation = data => {
+export const hapiLogin = data => {
   const schema = {
     email: Joi.string()
       .min(6)
@@ -63,34 +63,49 @@ export const loginValidation = data => {
   return Joi.validate(data, schema);
 };
 
+//Token Handlers
 export const newToken = user => {
-  const payload = {
-    id: user._id,
-    email: user.email
-  };
-
-  return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
+  // const payload = {
+  //   id: user._id,
+  //   email: user.email
+  // };
+  return jwt.sign(
+    {
+      id: user._id,
+      email: user.email
+    },
+    process.env.SECRET_KEY,
+    { expiresIn: "1d" }
+  );
 };
 
-export const verifyToken = token =>
-  new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
-      if (err) return reject(err);
-      resolve(payload);
-    });
-  });
+//initial post route for Register and Login
+export const signup = async (req, res, next) => {
+  const { firstName, lastName, email, password } = req.body;
 
-export const signup = async (req, res) => {
-  const { email, password, firstName, lastName } = req.body;
-  if (!req.body) {
-    const { error } = registerValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-  }
-  -o
+  if (!req.body) return res.status(400).send("handle the error yourself");
 
   try {
-    const user = await User.create(req.body);
+    let user = await User.findOne({ email });
+    if (user)
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "try another email or have a cookie" }] });
+
+    user = new User({
+      firstName,
+      lastName,
+      email,
+      password
+    });
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+    console.log(user);
+    await user.save();
+
     const token = newToken(user);
+
     return res.status(201).send({ token });
   } catch (err) {
     return res.status(500).send("Server Error");
@@ -104,32 +119,52 @@ export const signin = async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
   }
 };
-export const protect = async (req, res, next) => {
-  const bearer = req.headers.authorization
 
-  if (!bearer || !bearer.startsWith('Bearer ')) {
-    return res.status(401).end()
+export const verifyToken = token =>
+  new Promise((resolve, reject) => {
+    jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
+      if (err) return reject(err);
+      resolve(payload);
+    });
+  });
+
+// manual poo
+// https://medium.com/@maison.moa/using-jwt-json-web-tokens-to-authorize-users-and-protect-api-routes-3e04a1453c3e
+
+export const giveUsersPoo = async (req, res, next) => {
+  // now you can poo everywhere
+
+  // passport.use(
+  //   new JwtStrategy(opts, (jwt_payload, done) => {
+  //     User.findById(jwt_payload.id)
+  //       .then(user => {
+  //         if (user) {
+  //           return done(null, user);
+  //         }
+  //         return done(null, false);
+  //       })
+  //       .catch(err => console.log(err));
+  //   })
+  // );
+  const bearer = req.headers.authorization;
+
+  if (!bearer || !bearer.startsWith("Bearer ")) {
+    return res.status(401).end();
   }
-
-  const token = bearer.split('Bearer ')[1].trim()
-  let payload
+  const token = bearer.split("Bearer ")[1].trim();
+  let payload;
   try {
-    payload = await verifyToken(token)
+    payload = await verifyToken(token);
   } catch (e) {
-    return res.status(401).end()
+    return res.status(401).end();
   }
-
-  const user = await User.findById(payload.id)
-    .select('-password')
-    .lean()
-    .exec()
+  //
+  const user = await User.findById(payload.id).select("-password");
 
   if (!user) {
-    return res.status(401).end()
+    return res.status(401).end();
   }
 
-  req.user = user
-  next()
-}
-
-
+  req.user = user;
+  next();
+};

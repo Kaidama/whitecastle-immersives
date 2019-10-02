@@ -3,6 +3,11 @@ import { json, urlencoded } from 'body-parser'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
 import cors from 'cors'
+
+//the middleware used to get to poo
+import { giveUsersPoo, signup, signin } from '../src/utils/auth'
+import userRouter from '../src/routes/users'
+
 // import passport from 'passport'
 // const mongoose = require("mongoose")
 // const passport = require('passport')
@@ -11,7 +16,6 @@ import 'dotenv/config'
 
 const app = express();
 
-app.disable('x-powered-by')
 // DB connection
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -32,11 +36,19 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
+app.post('/signup', signup)
+app.post('/signin', signin)
 
-// app.use("/", require("./routes/index"));
-// app.use("/users", require("./routes/users"));
+// give all the users poo before attempting signing 
+app.use('/api', giveUsersPoo)// protected by jwt
+app.use('/api/user', userRouter)
 
-const PORT = process.env.PORT || 3001;
+//need a route for posting survey data
+//need a route for getting results 
+//need a route for 
+
+
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`)
 )
