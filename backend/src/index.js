@@ -5,9 +5,10 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 
 //the middleware used to get to poo
-import indexRouter from '../src/routes/index'
 import { giveUsersPoo, signup, signin } from '../src/utils/auth'
+import indexRouter from '../src/routes/index'
 import userRouter from '../src/routes/users'
+import surveyRouter from '../src/routes/survery'
 
 // import passport from 'passport'
 // const mongoose = require("mongoose")
@@ -37,13 +38,15 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
-app.use('/', indexRouter)
+
 app.post('/signup', signup)
 app.post('/signin', signin)
 
 
 // give all the users poo before attempting signing 
+
 app.use('/api', giveUsersPoo)// protected by jwt
+app.use('/api/survey', surveyRouter)
 app.use('/api/user', userRouter)
 
 //need a route for posting survey data
@@ -51,7 +54,7 @@ app.use('/api/user', userRouter)
 //need a route for 
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`)
 )
