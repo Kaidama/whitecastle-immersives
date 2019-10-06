@@ -1,89 +1,25 @@
-import Joi from "@hapi/joi";
 import { User } from "../models/User";
 import jwt from "jsonwebtoken";
-import { check } from "express-validator";
 import bcrypt from "bcryptjs";
-
-export const expressValidator = method => {
-  switch (method) {
-    case "signup": {
-      return [
-        check("firstName", "First name can not be blank")
-          .not()
-          .isEmpty(),
-        check("lastName", "Last name can not be blank")
-          .not()
-          .isEmpty(),
-        check("email", "Please include valid email").isEmail(),
-        check(
-          "password",
-          "Please enter password with at least 6 characters long"
-        ).isLength({ min: 6 })
-      ];
-    }
-    case "login": {
-      return [
-        check("email", "Valid Email or Password is required")
-          .isEmail()
-          .not()
-          .isEmpty(),
-        check("password", "Email or Password required ").exists()
-      ];
-    }
-  }
-};
-
-export const hapiRegister = data => {
-  const schema = {
-    firstName: Joi.string()
-      .min(3)
-      .required(),
-    lastName: Joi.string()
-      .min(2)
-      .required(),
-    email: Joi.string()
-      .min(6)
-      .required(),
-    password: Joi.string()
-      .min(6)
-      .required()
-  };
-  return Joi.validate(data, schema);
-};
-
-export const hapiLogin = data => {
-  const schema = {
-    email: Joi.string()
-      .min(6)
-      .required(),
-    password: Joi.string()
-      .min(6)
-      .required()
-  };
-  return Joi.validate(data, schema);
-};
+import { registerValidation } from "./validators";
 
 //Token Handlers
+
 export const newToken = user => {
-  // const payload = {
-  //   id: user._id,
-  //   email: user.email
-  // };
-  return jwt.sign(
-    {
-      id: user._id,
-      email: user.email
-    },
-    process.env.SECRET_KEY,
-    { expiresIn: "1d" }
-  );
+  const payload = {
+    id: user._id,
+    email: user.email
+  };
+  return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
 };
 
 //initial post route for Register and Login
 export const signup = async (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
 
-  if (!req.body) return res.status(400).send("handle the error yourself");
+  const { error } = registerValidation(req.body);
+  // console.log(req.body)
+  if (error) return res.status(400).send(error.details[0].message);
 
   try {
     let user = await User.findOne({ email });
@@ -108,15 +44,20 @@ export const signup = async (req, res, next) => {
 
     return res.status(201).send({ token });
   } catch (err) {
+    console.log(err);
     return res.status(500).send("Server Error");
   }
 };
 
 export const signin = async (req, res) => {
   const { email, password } = req.body;
-  if (!req.body) {
-    const { error } = registerValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+
+  const { error } = registerValidation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  try {
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -132,20 +73,7 @@ export const verifyToken = token =>
 // https://medium.com/@maison.moa/using-jwt-json-web-tokens-to-authorize-users-and-protect-api-routes-3e04a1453c3e
 
 export const giveUsersPoo = async (req, res, next) => {
-  // now you can poo everywhere
 
-  // passport.use(
-  //   new JwtStrategy(opts, (jwt_payload, done) => {
-  //     User.findById(jwt_payload.id)
-  //       .then(user => {
-  //         if (user) {
-  //           return done(null, user);
-  //         }
-  //         return done(null, false);
-  //       })
-  //       .catch(err => console.log(err));
-  //   })
-  // );
   const bearer = req.headers.authorization;
 
   if (!bearer || !bearer.startsWith("Bearer ")) {
