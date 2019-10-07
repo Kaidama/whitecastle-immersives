@@ -83,12 +83,12 @@ export const verifyToken = token =>
     });
   });
 
-// manual poo
+
 // https://medium.com/@maison.moa/using-jwt-json-web-tokens-to-authorize-users-and-protect-api-routes-3e04a1453c3e
 
 export const showMeYourPooh = async (req, res, next) => {
   const bearer = req.headers.authorization;
-  console.log(`survey: `, bearer);
+  // console.log(`survey: `, bearer);
   
   if (!bearer || !bearer.startsWith("Bearer ")) {
     return res.status(401).end();
@@ -111,5 +111,5 @@ export const showMeYourPooh = async (req, res, next) => {
   }
 
   req.user = user;
-  next();
+  next();//this is continuously ran through all routes after routes /api/<endpoint>
 };

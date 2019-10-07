@@ -8,7 +8,7 @@ import cors from 'cors'
 import { showMeYourPooh, signup, signin } from '../src/utils/auth'
 import indexRouter from '../src/routes/index'
 import userRouter from '../src/routes/users'
-import surveyRouter from '../src/routes/survery'
+import surveyRouter from '../src/routes/survey'
 
 // import passport from 'passport'
 // const mongoose = require("mongoose")
