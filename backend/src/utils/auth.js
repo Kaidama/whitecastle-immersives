@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { registerValidation, loginValidation } from "./validators";
 
-//Token Handlers
 
+// @ desc Token Handlers
 export const newToken = user => {
   const payload = {
     id: user._id
@@ -13,7 +13,45 @@ export const newToken = user => {
   return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
 };
 
-//initial post route for Register and Login
+export const verifyToken = token =>
+  new Promise((resolve, reject) => {
+    jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
+      if (err) return reject(err);
+      resolve(payload);
+    });
+  });
+// https://medium.com/@maison.moa/using-jwt-json-web-tokens-to-authorize-users-and-protect-api-routes-3e04a1453c3e
+
+export const showMeYourPooh = async (req, res, next) => {
+  const bearer = req.headers.authorization;
+  // console.log(`survey: `, bearer);
+  
+  if (!bearer || !bearer.startsWith("Bearer ")) {
+    return res.status(401).end();
+  }
+  const token = bearer.split("Bearer ")[1].trim();
+  let payload;
+  try {
+    payload = await verifyToken(token);
+   console.log(payload)
+  } catch (e) {
+    return res.status(401).end();
+  }
+  //
+  const user = await User.findById(payload.id)
+    .select("-password")
+    .lean()
+    .exec();
+  if (!user) {
+    return res.status(401).end();
+  }
+
+  req.user = user;
+  next();//this custom middleware will continuously be ran through all routes after routes /api/<endpoint>
+};
+
+
+// @desc initial post route for Register and Login
 export const signup = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
@@ -75,41 +113,7 @@ export const signin = async (req, res) => {
   }
 };
 
-export const verifyToken = token =>
-  new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
-      if (err) return reject(err);
-      resolve(payload);
-    });
-  });
 
 
-// https://medium.com/@maison.moa/using-jwt-json-web-tokens-to-authorize-users-and-protect-api-routes-3e04a1453c3e
 
-export const showMeYourPooh = async (req, res, next) => {
-  const bearer = req.headers.authorization;
-  // console.log(`survey: `, bearer);
-  
-  if (!bearer || !bearer.startsWith("Bearer ")) {
-    return res.status(401).end();
-  }
-  const token = bearer.split("Bearer ")[1].trim();
-  let payload;
-  try {
-    payload = await verifyToken(token);
-   console.log(payload)
-  } catch (e) {
-    return res.status(401).end();
-  }
-  //
-  const user = await User.findById(payload.id)
-    .select("-password")
-    .lean()
-    .exec();
-  if (!user) {
-    return res.status(401).end();
-  }
 
-  req.user = user;
-  next();//this is continuously ran through all routes after routes /api/<endpoint>
-};
