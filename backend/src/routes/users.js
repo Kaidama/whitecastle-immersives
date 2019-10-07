@@ -1,12 +1,7 @@
+import { Router } from "express";
+import { userData } from "../controllers/userController";
+const router = Router();
 
-import { Router } from 'express'
-import { userData } from '../controllers/userController'
-const router = Router()
+router.get("/", userData);
 
-
-router.get('/', userData )
-
-
-export default router
-
-
+export default router;
