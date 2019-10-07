@@ -3,12 +3,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { registerValidation, loginValidation } from "./validators";
 
-
 // @ desc Token Handlers
 export const newToken = user => {
   const payload = {
     id: user._id
-
   };
   return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
 };
@@ -23,33 +21,38 @@ export const verifyToken = token =>
 // https://medium.com/@maison.moa/using-jwt-json-web-tokens-to-authorize-users-and-protect-api-routes-3e04a1453c3e
 
 export const showMeYourPooh = async (req, res, next) => {
-  const bearer = req.headers.authorization;
+  let bearer = req.headers.authorization;
   // console.log(`survey: `, bearer);
-  
-  if (!bearer || !bearer.startsWith("Bearer ")) {
+
+  bearer = bearer.replace("Bearer ", "");
+
+  if (!bearer) {
+    console.log(`line 30: `, bearer);
     return res.status(401).end();
   }
-  const token = bearer.split("Bearer ")[1].trim();
+
   let payload;
+
   try {
-    payload = await verifyToken(token);
-   console.log(payload)
-  } catch (e) {
-    return res.status(401).end();
-  }
-  //
-  const user = await User.findById(payload.id)
+    payload = await verifyToken(bearer);
+    
+    const user = await User.findById(payload.id)
     .select("-password")
     .lean()
     .exec();
-  if (!user) {
+      if (!user) {
+        return res.status(401).end();
+      }
+
+      req.user = user;
+      next(); //this custom middleware will continuously be ran through all routes after routes /api/<endpoint>
+
+  } catch (e) {
     return res.status(401).end();
   }
 
-  req.user = user;
-  next();//this custom middleware will continuously be ran through all routes after routes /api/<endpoint>
-};
 
+};
 
 // @desc initial post route for Register and Login
 export const signup = async (req, res) => {
@@ -112,8 +115,3 @@ export const signin = async (req, res) => {
     console.log(err);
   }
 };
-
-
-
-
-

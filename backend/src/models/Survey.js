@@ -22,5 +22,5 @@ const SurveySchema = new mongoose.Schema({
   }
 });
 
-SurveySchema.index({ user: 1, gender: 1 }); // need more time to figure this out
+// SurveySchema.index({ user: 1, gender: 1 }); // need more time to figure this out
 export const Survey = mongoose.model("survey", SurveySchema);

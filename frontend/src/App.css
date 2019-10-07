@@ -1,4 +1,14 @@
 
+.text-center{
+    background-color: rgb(52, 75, 7);
+    height: 100vh;
+
+}
+.signUp, .signIn {
+    color: rgb(69, 174, 206);
+    
+   
+}
 
 .form-signin {
   width: 100%;
@@ -43,7 +53,7 @@
 .check-container {
     display: block;
     position: relative;
-    background-color: #ccc;
+    background-color: rgb(204, 204, 204);
     cursor: pointer;
     font-size: 20px;
     -webkit-user-select: none;
@@ -74,7 +84,7 @@
 
 .card {
     max-width: 400px;
-    height: 100vh;
+    height: 80vh;
     padding: 20px 20px 20px 20px;
     position: relative;
     background-color: rgb(153, 17, 17);
@@ -97,7 +107,7 @@
 
 .survey-title {
     font-size: 25px;
-    color: rgb(96, 96, 228);
+    color: rgb(107, 148, 26);
     font-weight: bold;
     text-transform: uppercase;
     margin-top: -10px;
@@ -116,6 +126,7 @@
 
 .survey-background{
     position: center;
+    background-color:rgb(52, 75, 7);
     background-image: url('./Survey.jpg');
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Do not repeat the image */
@@ -139,3 +150,31 @@
     line-height: 49px;
     overflow-y: auto;
 }
+
+/*  */
+.pie {
+    margin: 20px;
+  }
+  
+  svg {
+      float: left;
+  }
+  
+  .legend {
+    float: left;
+    font-family: "Verdana";
+    font-size: .7em;
+  }
+  
+  .pie text {
+    font-family: "Verdana";
+    fill: #000;
+  }
+  
+  .pie .name-text{
+    font-size: .8em;
+  }
+  
+  .pie .value-text{
+    font-size: 3em;
+  }

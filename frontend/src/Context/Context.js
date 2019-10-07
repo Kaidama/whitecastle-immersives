@@ -5,6 +5,7 @@ export default React.createContext({
   handleSignUp: () => {},
   logout: () => {},
   handleResults: () => {},
+  handleSurvey: () => {},
   isAuth: false,
   user: null,
   message: ''

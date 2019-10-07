@@ -11,13 +11,13 @@ export const registerValidation = data => {
       .min(2)
       .required(),
     email: Joi.string()
-      .label("Email")
+      .label("Email Address")
       .min(6)
       .required()
       .email(),
     password: Joi.string()
       .label("Password")
-      .min(6)
+      .min(3)
       .required()
   });
   return schema.validate(data);

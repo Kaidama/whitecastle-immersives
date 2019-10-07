@@ -14,7 +14,7 @@ export const apiHandleSignUp = (userInfo) => {
           }
       };
 
-      Axios.post('/users/sign-up', userInfo, axiosConfig)
+      Axios.post('/signup', userInfo, axiosConfig)
            .then( result => {
 
               const { token } = result.data;
@@ -48,7 +48,7 @@ export const apiHandleSignin = (userInfo) => {
           }
       };
 
-      Axios.post('/users/sign-in', userInfo, axiosConfig)
+      Axios.post('/signin', userInfo, axiosConfig)
            .then( result => {
 
               const { token } = result.data;
@@ -88,3 +88,43 @@ export const handleJWTExpirationApi = () => {
         }
     });
 }
+
+export const apiHandleCreateSurvey = (survey) => {
+
+    //make ajax call to the server with survey data object and user ID
+    return new Promise((resolve, reject) => {
+
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                'Access-Control-Allow-Origin': "*"
+            }
+        };
+
+        let token = localStorage.getItem('jwtToken');
+        // console.log(token)
+        const decoded = jwt_decode(token);
+        console.log(token)
+        survey.id = decoded.id
+
+
+  
+        Axios.post('/api/survey', survey, axiosConfig)
+             .then( result => {
+  
+                const { token } = result.data;
+  
+        
+                setAuthJWT(token);
+  
+                resolve(decoded);
+  
+             })
+             .catch( error => {
+                 reject(error);
+             })
+    
+  
+    });
+
+}   
