@@ -25,7 +25,8 @@ const getAllDocs = model => async (req, res) => {
     res.status(400).end();
   }
 };
-
+// need one for updating profile || survey data
+// 
 export const mongoTools = model => ({
   createDoc: createDoc(model),
   getAllDocs: getAllDocs(model)

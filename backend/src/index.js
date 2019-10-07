@@ -27,12 +27,12 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
-app.post("/signup", signup); // handles signup with creating a user / bcrypt / assigns JWT
-app.post("/signin", signin); // handles sign in with verifying existing user / bcrypt / assigns JWT for protected /api routes
+app.post("/signup", signup); // @desc handles signup with creating a user / bcrypt / assigns JWT
+app.post("/signin", signin); // @desc handles sign in with verifying existing user / bcrypt / assigns JWT for protected /api routes
 
-app.use("/api", showMeYourPooh); // protected by jwt, this is where we check for POOH
-app.use("/api/survey", surveyRouter); // this route handles submitting surveys and populating survey DB collection
-app.use("/api/user", userRouter); // this will show you who is the currently logged in
+app.use("/api", showMeYourPooh); // @desc protected by jwt, this is where we check for POOH.
+app.use("/api/survey", surveyRouter); // @desc handles submitting surveys and populating survey DB collection
+app.use("/api/user", userRouter); // @desc shows you who is the currently logged in
 
 const PORT = process.env.PORT || 5000;
 
