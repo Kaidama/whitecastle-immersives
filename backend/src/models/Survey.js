@@ -6,7 +6,8 @@ const now = moment()
 const SurveySchema = new mongoose.Schema({
   createdBy: { 
     type: mongoose.SchemaTypes.ObjectId, 
-    ref: 'user'
+    ref: 'user',
+    required: true
   },
   gender: { type: String, default: "" },
   education: { type: String, default: "" },
@@ -16,4 +17,5 @@ const SurveySchema = new mongoose.Schema({
     default: now.format("dddd, MMMM Do YYYY, kk:mm:ss")
   }
 });
+
 export const Survey = mongoose.model("survey", SurveySchema);

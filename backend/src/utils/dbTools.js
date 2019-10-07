@@ -1,8 +1,8 @@
 const createDoc =  model => async (req, res) => {
-
     const createdBy = req.user._id  
     try{
         const doc = await model.create({ ...req.body, createdBy })
+        console.log(req.body)
         res.status(201).json({ data: doc })
     }catch (e){
         console.log(e)

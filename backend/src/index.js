@@ -5,7 +5,7 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 
 //the middleware used to get to poo
-import { giveUsersPoo, signup, signin } from '../src/utils/auth'
+import { showMeYourPooh, signup, signin } from '../src/utils/auth'
 import indexRouter from '../src/routes/index'
 import userRouter from '../src/routes/users'
 import surveyRouter from '../src/routes/survery'
@@ -45,7 +45,7 @@ app.post('/signin', signin)
 
 // give all the users poo before attempting signing 
 
-app.use('/api', giveUsersPoo)// protected by jwt
+app.use('/api', showMeYourPooh)// protected by jwt
 app.use('/api/survey', surveyRouter)
 app.use('/api/user', userRouter)
 
