@@ -11,11 +11,12 @@ const SurveySchema = new mongoose.Schema({
   submittedBy: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: "user",
-    required: true
-  },
-  gender: { type: String },
-  education: { type: String },
-  employmentStatus: { type: String },
+    required: true,
+    index: true
+  },    
+  gender: { type: String , index: true},
+  education: { type: String, index: true},
+  employmentStatus: { type: String, index: true },
   timestamp: {
     type: String,
     default: now.format("dddd, MMMM Do YYYY, kk:mm:ss")

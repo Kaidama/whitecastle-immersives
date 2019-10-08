@@ -8,18 +8,39 @@ const createDoc = model => async (req, res) => {
     res.status(201).json({ data: doc });
   } catch (err) {
     console.log(err);
+    return res.status(400).end();
+  }
+};
+
+const getAllSurveys = model => async (req, res) => {
+  try {
+    //took 5.25ms to return my results using aggregate
+    const education = await model.aggregate([
+      {
+        $group: { _id: "$education", total: { $sum: 1 } }
+      }
+    ])
+    const gender = await model.aggregate([
+      {
+        $group: { _id: "$gender", total: { $sum: 1 } }
+      }
+    ]);
+    const employment = await model.aggregate([
+      {
+        $group: { _id: "$employmentStatus", total: { $sum: 1 } }
+      }
+    ]);
+
+   return res.status(200).json({ education, gender, employment });
+  } catch (err) {
+    console.log(err);
     res.status(400).end();
   }
 };
 
 const getAllDocs = model => async (req, res) => {
   try {
-    const docs = await model.aggregate([
-      {
-        $group: { _id: "$education", total: { $sum: 1 } }
-        // $group : {_id : "$employmentStatus", total :{ $sum : 1}}
-      }
-    ]);
+    const docs = await model.find({});
 
     console.log(docs);
     res.status(200).json({ data: docs });
@@ -29,8 +50,13 @@ const getAllDocs = model => async (req, res) => {
   }
 };
 // need one for updating profile || survey data
+// create controller file IAW someController.js 
+// import Schema you would like to pass through as a model
+//
+// pass in as the model through your controller
 //
 export const mongoTools = model => ({
   createDoc: createDoc(model),
-  getAllDocs: getAllDocs(model)
+  getAllDocs: getAllDocs(model),
+  getAllSurveys: getAllSurveys(model)
 });

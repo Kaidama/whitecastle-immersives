@@ -43,7 +43,7 @@ export default class Navbar extends Component {
             {!isAuth ? (
               <NavLink
                 exact
-                to='/sign-in'
+                to='/signin'
                 className='nav-link'
                 activeClassName='selected'
               >

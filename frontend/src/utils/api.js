@@ -102,7 +102,7 @@ export const apiHandleCreateSurvey = (survey) => {
         };
 
         let token = localStorage.getItem('jwtToken');
-        // console.log(token)
+
         const decoded = jwt_decode(token);
         console.log(token)
         survey.id = decoded.id
@@ -110,6 +110,49 @@ export const apiHandleCreateSurvey = (survey) => {
 
   
         Axios.post('/api/survey', survey, axiosConfig)
+             .then( result => {
+  
+                const { token } = result.data;
+  
+        
+                setAuthJWT(token);
+  
+                resolve(decoded);
+  
+             })
+             .catch( error => {
+                 reject(error);
+             })
+    
+  
+    });
+
+}   
+
+    //change this request to a GET
+export const apiHandleSurveyResults = (survey) => {
+
+    //make ajax call to the server with survey data object and user ID
+    //pass this down to componentdidmount??
+    
+    return new Promise((resolve, reject) => {
+
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                'Access-Control-Allow-Origin': "*"
+            }
+        };
+
+        let token = localStorage.getItem('jwtToken');
+
+        const decoded = jwt_decode(token);
+        console.log(token)
+        survey.id = decoded.id
+
+
+  
+        Axios.get('/api/survey', survey, axiosConfig)
              .then( result => {
   
                 const { token } = result.data;

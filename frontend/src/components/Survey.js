@@ -15,10 +15,6 @@ class Survey extends Component {
     super(props);
 
     this.state = {
-      //   user: "",
-      //   email: "",
-      //   firstName: "",
-      //   lastName: "",
       submittedBy: "",
       gender: "",
       education: "",
