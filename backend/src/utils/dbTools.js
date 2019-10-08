@@ -14,24 +14,27 @@ const createDoc = model => async (req, res) => {
 
 const getAllSurveys = model => async (req, res) => {
   try {
-    //took 5.25ms to return my results using aggregate
-    const education = await model.aggregate([
-      {
-        $group: { _id: "$education", total: { $sum: 1 } }
-      }
-    ])
-    const gender = await model.aggregate([
+
+    const genderCount = await model.aggregate([
       {
         $group: { _id: "$gender", total: { $sum: 1 } }
       }
     ]);
-    const employment = await model.aggregate([
+    
+    //took 5.25ms to return my results using aggregate
+    const educationCount = await model.aggregate([
+      {
+        $group: { _id: "$education", total: { $sum: 1 } }
+      }
+    ])
+   
+    const employmentCount = await model.aggregate([
       {
         $group: { _id: "$employmentStatus", total: { $sum: 1 } }
       }
     ]);
 
-   return res.status(200).json({ education, gender, employment });
+   return res.status(200).json({ educationCount, genderCount, employmentCount });
   } catch (err) {
     console.log(err);
     res.status(400).end();

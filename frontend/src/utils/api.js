@@ -1,173 +1,136 @@
-import Axios from './Axios';
-import jwt_decode from 'jwt-decode';
-import setAuthJWT from './setAuthJWT';
+import Axios from "./Axios";
+import jwt_decode from "jwt-decode";
+import setAuthJWT from "./setAuthJWT";
 
-export const apiHandleSignUp = (userInfo) => {
-
+export const apiHandleSignUp = userInfo => {
   return new Promise((resolve, reject) => {
+    let axiosConfig = {
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
 
-      let axiosConfig = {
-          headers: {
-              'Content-Type': 'application/json;charset=UTF-8',
-              'Access-Control-Allow-Origin': "*",
-            
-          }
-      };
+    Axios.post("/signup", userInfo, axiosConfig)
+      .then(result => {
+        const { token } = result.data;
 
-      Axios.post('/signup', userInfo, axiosConfig)
-           .then( result => {
+        localStorage.setItem("jwtToken", token);
 
-              const { token } = result.data;
+        const decoded = jwt_decode(token);
 
-              localStorage.setItem('jwtToken', token);
+        setAuthJWT(token);
 
-              const decoded = jwt_decode(token);
-
-              setAuthJWT(token);
-
-              resolve(decoded);
-
-           })
-           .catch( error => {
-               reject(error);
-           })
-  
-
+        resolve(decoded);
+      })
+      .catch(error => {
+        reject(error);
+      });
   });
-}
+};
 
-export const apiHandleSignin = (userInfo) => {
-
+export const apiHandleSignin = userInfo => {
   return new Promise((resolve, reject) => {
+    let axiosConfig = {
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
 
-      let axiosConfig = {
-          headers: {
-              'Content-Type': 'application/json;charset=UTF-8',
-              'Access-Control-Allow-Origin': "*",
-            
-          }
-      };
+    Axios.post("/signin", userInfo, axiosConfig)
+      .then(result => {
+        const { token } = result.data;
 
-      Axios.post('/signin', userInfo, axiosConfig)
-           .then( result => {
+        localStorage.setItem("jwtToken", token);
 
-              const { token } = result.data;
+        const decoded = jwt_decode(token);
 
-              localStorage.setItem('jwtToken', token);
+        setAuthJWT(token);
 
-              const decoded = jwt_decode(token);
-
-              setAuthJWT(token);
-
-              resolve(decoded);
-
-           })
-           .catch( error => {
-               reject(error);
-           })
-  
-
+        resolve(decoded);
+      })
+      .catch(error => {
+        reject(error);
+      });
   });
-}
+};
 
 export const handleJWTExpirationApi = () => {
+  return new Promise((resolve, reject) => {
+    let token = localStorage.getItem("jwtToken");
+    let currentTime = Date.now() / 1000;
+    let decoded = jwt_decode(token);
 
-    return new Promise((resolve, reject) => {
+    if (decoded.exp < currentTime) {
+      localStorage.removeItem("jwtToken");
+      setAuthJWT(null);
+      reject(null);
+    } else {
+      setAuthJWT(token);
+      resolve(decoded);
+    }
+  });
+};
 
-        let token = localStorage.getItem('jwtToken');
-        let currentTime = Date.now() / 1000;
-        let decoded = jwt_decode(token);
+export const apiHandleCreateSurvey = survey => {
+  //make ajax call to the server with survey data object and user ID
+  return new Promise((resolve, reject) => {
+    let axiosConfig = {
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
 
-        if (decoded.exp < currentTime) {
-            localStorage.removeItem('jwtToken');
-            setAuthJWT(null);
-            reject(null);
-        } else {
-            setAuthJWT(token);
-            resolve(decoded);
-        }
-    });
-}
+    let token = localStorage.getItem("jwtToken");
 
-export const apiHandleCreateSurvey = (survey) => {
+    const decoded = jwt_decode(token);
+    console.log(token);
+    survey.id = decoded.id;
 
-    //make ajax call to the server with survey data object and user ID
-    return new Promise((resolve, reject) => {
+    Axios.post("/api/survey", survey, axiosConfig)
+      .then(result => {
+        const { token } = result.data;
 
-        let axiosConfig = {
-            headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
-                'Access-Control-Allow-Origin': "*"
-            }
-        };
+        setAuthJWT(token);
 
-        let token = localStorage.getItem('jwtToken');
+        resolve(decoded);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+};
 
-        const decoded = jwt_decode(token);
-        console.log(token)
-        survey.id = decoded.id
+//change this request to a GET
+export const apiGrabSurveyTotalData = survey => {
+  //TOUCH Jimmy’s ENDPOINT
+  //TO get the total COUNT AND LENGTH OF the surives ENDPOINT WINK WINK
+  let axiosConfig = {
+    headers: {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Access-Control-Allow-Origin": "*"
+    }
+  };
 
+  let token = localStorage.getItem("jwtToken");
 
-  
-        Axios.post('/api/survey', survey, axiosConfig)
-             .then( result => {
-  
-                const { token } = result.data;
-  
-        
-                setAuthJWT(token);
-  
-                resolve(decoded);
-  
-             })
-             .catch( error => {
-                 reject(error);
-             })
-    
-  
-    });
+  const decoded = jwt_decode(token);
+  console.log(token);
+  survey.id = decoded.id;
 
-}   
+  return new Promise((resolve, reject) => {
+    Axios.get("/api/survey", survey, axiosConfig)
+      .then(result => {
+        const { token } = result.data;
 
-    //change this request to a GET
-export const apiHandleSurveyResults = (survey) => {
-
-    //make ajax call to the server with survey data object and user ID
-    //pass this down to componentdidmount??
-    
-    return new Promise((resolve, reject) => {
-
-        let axiosConfig = {
-            headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
-                'Access-Control-Allow-Origin': "*"
-            }
-        };
-
-        let token = localStorage.getItem('jwtToken');
-
-        const decoded = jwt_decode(token);
-        console.log(token)
-        survey.id = decoded.id
-
-
-  
-        Axios.get('/api/survey', survey, axiosConfig)
-             .then( result => {
-  
-                const { token } = result.data;
-  
-        
-                setAuthJWT(token);
-  
-                resolve(decoded);
-  
-             })
-             .catch( error => {
-                 reject(error);
-             })
-    
-  
-    });
-
-}   
+        setAuthJWT(token);
+            console.log(result.data)
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+};

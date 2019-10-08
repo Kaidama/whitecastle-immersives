@@ -20,7 +20,8 @@ import {
   apiHandleSignUp,
   apiHandleSignin,
   apiHandleCreateSurvey,
-  handleJWTExpirationApi
+  handleJWTExpirationApi,
+  apiGrabSurveyTotalData
 } from "./utils/api";
 
 import "./App.css";
@@ -42,7 +43,9 @@ export default class App extends Component {
           isAuth: true
         });
       })
-      .catch(error => {});
+      .catch(error => {
+        "sign in";
+      });
   }
 
   handleSignUp = userInfo => {
@@ -58,7 +61,9 @@ export default class App extends Component {
           }
         );
       })
-      .catch(error => {});
+      .catch(error => {
+        "sign up before proceding the survey";
+      });
   };
 
   handleSignIn = userInfo => {

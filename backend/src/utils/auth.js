@@ -35,23 +35,20 @@ export const showMeYourPooh = async (req, res, next) => {
 
   try {
     payload = await verifyToken(bearer);
-    
+
     const user = await User.findById(payload.id)
-    .select("-password")
-    .lean()
-    .exec();
-      if (!user) {
-        return res.status(401).end();
-      }
+      .select("-password")
+      .lean()
+      .exec();
+    if (!user) {
+      return res.status(401).end();
+    }
 
-      req.user = user;
-      next(); //this custom middleware will continuously be ran through all routes after routes /api/<endpoint>
-
+    req.user = user;
+    next(); //this custom middleware will continuously be ran through all routes after routes /api/<endpoint>
   } catch (e) {
     return res.status(401).end();
   }
-
-
 };
 
 // @desc initial post route for Register and Login
@@ -60,14 +57,17 @@ export const signup = async (req, res) => {
 
   const { error } = registerValidation(req.body);
   // console.log(req.body)
+
   if (error) return res.status(400).send(error.details[0].message);
 
   try {
     let user = await User.findOne({ email });
-    if (user)
+
+    if (user) {
       return res
         .status(400)
-        .json({ errors: [{ msg: "try another email or have a cookie" }] });
+        .send({ errors: [{ msg: "try another email or have a cookie" }] });
+    }
 
     user = new User({
       firstName,
